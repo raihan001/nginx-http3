@@ -63,7 +63,6 @@ source $HOME/.cargo/env
 
 patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 ./configure \
---add-dynamic-module=../ngx_brotli \
 --with-stream \
 --with-threads \
 --prefix=/usr/local/nginx \
