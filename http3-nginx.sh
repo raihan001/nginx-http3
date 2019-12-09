@@ -26,7 +26,7 @@ cd openssl
 make -j4
 make -j4 install_sw
 rm -rf /usr/sbin/openssl
-ls -s /usr/local/ssl/sbin/openssl /usr/sbin/
+ln -s /usr/local/ssl/sbin/openssl /usr/sbin/
 
 
 echo "====================================================================================
@@ -110,7 +110,9 @@ mkdir /etc/nginx/conf.d
 mkdir /etc/nginx/sites-enabled
 mkdir /etc/nginx/sites-available
 mkdir /var/log/nginx
-
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
+cp -r /usr/local/nginx/conf/* /etc/nginx
+rm -rf /etc/nginx/nginx.conf
 
 echo "+++++++++++++++++++++++++++++++++++++++++++
 Create default nginx configuration
@@ -182,8 +184,7 @@ http {
 }
 EOL
 
-ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf/* /etc/nginx/
+
 systemctl daemon-reload
 
 
