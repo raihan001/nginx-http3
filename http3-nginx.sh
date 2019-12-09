@@ -176,7 +176,7 @@ worker_processes  auto;
 error_log  /var/log/nginx/error.log crit;
 pid        /var/run/nginx.pid;
 worker_rlimit_nofile 8192;
-
+EOF
 
 cat >/etc/nginx/nginx.conf <<EOL
 events {
