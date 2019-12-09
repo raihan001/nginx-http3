@@ -45,6 +45,14 @@ cmake ..
 make -j4
 
 
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Brotli build
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+cd ~/development
+git clone https://github.com/google/ngx_brotli.git
+cd ngx_brotli && git submodule update --init
+
+
 echo "====================================================================================
 Nginx http/3
 ===================================================================================="
@@ -63,6 +71,7 @@ ln -s ~/.cargo/bin/* /usr/sbin/
 
 patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 ./configure \
+--with-compat --add-dynamic-module=../ngx_brotli \
 --with-stream \
 --with-threads \
 --prefix=/usr/local/nginx \
@@ -73,10 +82,28 @@ patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 --with-openssl=../quiche/deps/boringssl \
 --with-quiche=../quiche
 
-make -j4
-make -j4 install 
+make
+make modules
+make install 
 adduser --system --shell /bin/false --no-create-home --disabled-login --disabled-password --gecos "nginx user" --group nginx
 
+echo "++++++++++++++++++++++++++++++++++++++++++++
+copy directory
+++++++++++++++++++++++++++++++++++++++++++++"
+rm -rf /etc/nginx
+mkdir /etc/nginx
+rm -rf /usr/sbin/nginx
+mkdir /etc/nginx/certs
+mkdir /etc/nginx/conf.d
+mkdir /etc/nginx/sites-enabled
+mkdir /etc/nginx/sites-available
+mkdir /etc/nginx/modules
+mkdir /var/log/nginx
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
+cp -r /usr/local/nginx/conf/* /etc/nginx
+rm -rf /etc/nginx/nginx.conf
+cp objs/*.so /etc/nginx/modules
+chmod 644 /etc/nginx/modules/*.so
 
 echo "+++++++++++++++++++++++++++++++++++++++++++
 enable systemd nginx
@@ -97,22 +124,6 @@ ExecStop=/bin/kill -s TERM $MAINPID
 [Install]
 WantedBy=multi-user.target
 EOL
-
-echo "++++++++++++++++++++++++++++++++++++++++++++
-copy directory
-++++++++++++++++++++++++++++++++++++++++++++"
-rm -rf /etc/nginx
-mkdir /etc/nginx
-rm -rf /usr/sbin/nginx
-mkdir /etc/nginx
-mkdir /etc/nginx/certs
-mkdir /etc/nginx/conf.d
-mkdir /etc/nginx/sites-enabled
-mkdir /etc/nginx/sites-available
-mkdir /var/log/nginx
-ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf/* /etc/nginx
-rm -rf /etc/nginx/nginx.conf
 
 echo "+++++++++++++++++++++++++++++++++++++++++++
 Create default nginx configuration
@@ -168,6 +179,8 @@ worker_processes  auto;
 error_log  /var/log/nginx/error.log crit;
 pid        /var/run/nginx.pid;
 worker_rlimit_nofile 8192;
+load_module /etc/nginx/modules/ngx_http_brotli_filter_module.so;
+load_module /etc/nginx/modules/ngx_http_brotli_static_module.so;
 events {
   worker_connections  4096;
 }
@@ -180,6 +193,11 @@ http {
   access_log   /var/log/access.log  off;
   sendfile     on;
   tcp_nopush   on;
+  #brotli
+  brotli on;
+  brotli_static on;
+  brotli_comp_level 9;
+  brotli_types text/xml image/svg+xml application/x-font-ttf image/vnd.microsoft.icon application/x-font-opentype application/json font/eot application/vnd.ms-fontobject application/javascript font/otf application/xml application/xhtml+xml text/javascript  application/x-javascript text/plain application/x-font-truetype application/xml+rss image/x-icon font/opentype text/css image/x-win-bitmap;
   server_names_hash_bucket_size 128;
 }
 EOL
