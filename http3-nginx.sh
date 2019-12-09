@@ -41,8 +41,8 @@ Boringssl build
 cd ~/development/quiche/deps/
 rm -rf boringssl
 git clone https://github.com/raihan001/boringssl.git
-git checkout ARM64
 cd boringssl
+git checkout ARM64
 mkdir build
 cd build
 cmake EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17 -DCMAKE_POSITION_INDEPENDENT_CODE=on' ..
@@ -55,8 +55,8 @@ Nginx http/3
 cd ~/development
 
 curl -O https://nginx.org/download/nginx-1.16.1.tar.gz
-tar xzvf nginx-1.16.1.tar.gz
-
+tar -xzvf nginx-1.16.1.tar.gz
+cd nginx-1.16.1
 
 +++++++++++++++++++++++++++++++++++++
 rustc installation
