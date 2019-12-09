@@ -108,6 +108,7 @@ echo "++++++++++++++++++++++++++++++++++++++++++++
 copy directory
 ++++++++++++++++++++++++++++++++++++++++++++"
 rm -rf /etc/nginx
+mkdir /etc/nginx
 rm -rf /usr/sbin/nginx
 ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
 cp /usr/local/nginx/conf /etc/nginx
