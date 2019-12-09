@@ -104,8 +104,7 @@ copy directory
 rm -rf /etc/nginx
 mkdir /etc/nginx
 rm -rf /usr/sbin/nginx
-ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf /etc/nginx
+mkdir /etc/nginx
 mkdir /etc/nginx/certs
 mkdir /etc/nginx/conf.d
 mkdir /etc/nginx/sites-enabled
@@ -183,6 +182,8 @@ http {
 }
 EOL
 
+ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
+cp -r /usr/local/nginx/conf/* /etc/nginx/
 systemctl daemon-reload
 
 
