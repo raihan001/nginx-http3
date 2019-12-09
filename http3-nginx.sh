@@ -59,7 +59,7 @@ rustc installation
 +++++++++++++++++++++++++++++++++++++"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
-
+ln -s ~/.cargo/bin/* /usr/sbin/
 
 patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 ./configure \
