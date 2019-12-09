@@ -182,7 +182,7 @@ http {
 }
 EOL
 
-ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
 cp -r /usr/local/nginx/conf/* /etc/nginx/
 systemctl daemon-reload
 
