@@ -102,7 +102,7 @@ ExecStop=/bin/kill -s TERM $MAINPID
 
 [Install]
 WantedBy=multi-user.target
-EOF
+EOL
 
 echo "++++++++++++++++++++++++++++++++++++++++++++
 copy directory
@@ -135,7 +135,7 @@ server {
                try_files $uri $uri/ =404;
        }
 }
-EOF
+EOL
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/private.key -out /etc/nginx/certs/cert.crt
 
@@ -157,7 +157,7 @@ server {
         # Add Alt-Svc header to negotiate HTTP/3.
         add_header alt-svc 'h3-23=":443"; ma=86400';
 }
-EOF
+EOL
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 ln -s /etc/nginx/sites-available/default-http3 /etc/nginx/sites-enabled/
 
@@ -180,7 +180,7 @@ worker_processes  auto;
 error_log  /var/log/nginx/error.log crit;
 pid        /var/run/nginx.pid;
 worker_rlimit_nofile 8192;
-EOF
+EOL
 
 cat >/etc/nginx/nginx.conf <<EOL
 events {
@@ -199,7 +199,7 @@ http {
   tcp_nopush   on;
   server_names_hash_bucket_size 128;
 }
-EOF
+EOL
 
 systemctl daemon-reload
 
