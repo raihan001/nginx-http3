@@ -172,16 +172,15 @@ proxy_connect_timeout   90;
 proxy_send_timeout      90;
 proxy_read_timeout      90;
 proxy_buffers           32 4k;
+EOL
 
-
+cat >/etc/nginx/nginx.conf <<EOL
 user       www-data;  
 worker_processes  auto;  
 error_log  /var/log/nginx/error.log crit;
 pid        /var/run/nginx.pid;
 worker_rlimit_nofile 8192;
-EOL
 
-cat >/etc/nginx/nginx.conf <<EOL
 events {
   worker_connections  4096;
 }
@@ -193,7 +192,7 @@ http {
   include    /etc/nginx/sites-enabled/*;
 
   default_type application/octet-stream;
-  access_log   logs/access.log  main;
+  access_log   logs/access.log  off;
   sendfile     on;
   tcp_nopush   on;
   server_names_hash_bucket_size 128;
