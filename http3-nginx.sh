@@ -54,9 +54,9 @@ curl -O https://nginx.org/download/nginx-1.16.1.tar.gz
 tar -xzvf nginx-1.16.1.tar.gz
 cd nginx-1.16.1
 
-+++++++++++++++++++++++++++++++++++++
+echo "+++++++++++++++++++++++++++++++++++++
 rustc installation
-+++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++"
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 source $HOME/.cargo/env
 
