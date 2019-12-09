@@ -111,7 +111,7 @@ rm -rf /etc/nginx
 mkdir /etc/nginx
 rm -rf /usr/sbin/nginx
 ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp /usr/local/nginx/conf /etc/nginx
+cp -r /usr/local/nginx/conf /etc/nginx
 mkdir /etc/nginx/certs
 mkdir /etc/nginx/conf.d
 mkdir /etc/nginx/sites-enabled
@@ -165,8 +165,6 @@ ln -s /etc/nginx/sites-available/default-http3 /etc/nginx/sites-enabled/
 
 cat >/etc/nginx/conf.d/proxy.conf <<EOL
 proxy_redirect          off;
-proxy_set_header        Host            $host;
-proxy_set_header        X-Real-IP       $remote_addr;
 proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
 client_max_body_size    10m;
 client_body_buffer_size 128k;
@@ -174,7 +172,7 @@ proxy_connect_timeout   90;
 proxy_send_timeout      90;
 proxy_read_timeout      90;
 proxy_buffers           32 4k;
-EOF
+
 
 user       www-data;  
 worker_processes  auto;  
