@@ -54,8 +54,8 @@ Nginx http/3
 cd ~/development
 
 curl -O https://nginx.org/download/nginx-1.16.1.tar.gz
-tar xzvf nginx-1.16.1.tar.gz
-
+tar -xzvf nginx-1.16.1.tar.gz
+cd nginx-1.16.1
 
 +++++++++++++++++++++++++++++++++++++
 rustc installation
