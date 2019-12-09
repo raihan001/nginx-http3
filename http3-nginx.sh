@@ -23,8 +23,8 @@ cd ~/development
 git clone --depth 1 -b openssl-quic-draft-23 https://github.com/tatsuhiro-t/openssl
 cd openssl
 ./config enable-tls1_3 --prefix=/usr/local/ssl --openssldir=/usr/local/ssl shared zlib
-make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17'
-make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17' install_sw
+make -j4
+make -j4 install_sw
 rm -rf /usr/sbin/openssl
 ls -s /usr/local/ssl/sbin/openssl /usr/sbin/
 
@@ -38,11 +38,14 @@ git clone --recursive https://github.com/cloudflare/quiche
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Boringssl build
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-cd ~/development/quiche/deps/boringssl
+cd ~/development/quiche/deps/
+rm -rf boringssl
+git clone https://github.com/raihan001/boringssl.git
+cd boringssl
 mkdir build
 cd build
-cmake EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17 -DCMAKE_POSITION_INDEPENDENT_CODE=on' ..
-make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17'
+cmake ..
+make -j4
 
 
 echo "====================================================================================
@@ -74,8 +77,8 @@ patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 --with-openssl=../quiche/deps/boringssl \
 --with-quiche=../quiche
 
-make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17'
-make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17' install 
+make -j4
+make -j4 install 
 adduser --system --shell /bin/false --no-create-home --disabled-login --disabled-password --gecos "nginx user" --group nginx
 
 
