@@ -35,10 +35,14 @@ Build quiche
 cd ~/development
 git clone --recursive https://github.com/cloudflare/quiche
 
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+echo"++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Boringssl build
-++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-cd ~/development/quiche/deps/boringssl
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+cd ~/development/quiche/deps/
+rm -rf boringssl
+git clone https://github.com/raihan001/boringssl.git
+git checkout ARM64
+cd boringssl
 mkdir build
 cd build
 cmake EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17 -DCMAKE_POSITION_INDEPENDENT_CODE=on' ..
