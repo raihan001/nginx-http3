@@ -26,7 +26,7 @@ cd openssl
 make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17'
 make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17' install_sw
 rm -rf /usr/sbin/openssl
-ls -s /usr/local/ssl/sbin/openssl /usr/sbin/
+ln -s /usr/local/ssl/sbin/openssl /usr/sbin/
 
 
 echo "====================================================================================
@@ -110,13 +110,14 @@ copy directory
 rm -rf /etc/nginx
 mkdir /etc/nginx
 rm -rf /usr/sbin/nginx
-mkdir /etc/nginx
 mkdir /etc/nginx/certs
 mkdir /etc/nginx/conf.d
 mkdir /etc/nginx/sites-enabled
 mkdir /etc/nginx/sites-available
 mkdir /var/log/nginx
-
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
+cp -r /usr/local/nginx/conf/* /etc/nginx
+rm -rf /etc/nginx/nginx.conf
 
 echo "+++++++++++++++++++++++++++++++++++++++++++
 Create default nginx configuration
@@ -196,8 +197,7 @@ http {
   server_names_hash_bucket_size 128;
 }
 EOL
-ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf/* /etc/nginx
+
 systemctl daemon-reload
 
 
