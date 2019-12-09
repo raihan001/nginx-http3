@@ -87,7 +87,6 @@ Description=Nginx - With Boringssl and http3
 Documentation=https://nginx.org/en/docs/
 After=network-online.target remote-fs.target nss-lookup.target
 Wants=network-online.target
-
 [Service]
 Type=forking
 PIDFile=/var/run/nginx.pid
@@ -95,18 +94,18 @@ ExecStartPre=/usr/sbin/nginx -t -c /etc/nginx/nginx.conf
 ExecStart=/usr/sbin/nginx -c /etc/nginx/nginx.conf
 ExecReload=/bin/kill -s HUP $MAINPID
 ExecStop=/bin/kill -s TERM $MAINPID
-
 [Install]
 WantedBy=multi-user.target
-EOF
+EOL
 
 echo "++++++++++++++++++++++++++++++++++++++++++++
 copy directory
 ++++++++++++++++++++++++++++++++++++++++++++"
 rm -rf /etc/nginx
+mkdir /etc/nginx
 rm -rf /usr/sbin/nginx
 ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp /usr/local/nginx/conf /etc/nginx
+cp -r /usr/local/nginx/conf /etc/nginx
 mkdir /etc/nginx/certs
 mkdir /etc/nginx/conf.d
 mkdir /etc/nginx/sites-enabled
@@ -121,17 +120,14 @@ cat >/etc/nginx/sites-available/default <<EOL
 server {
        listen 80 default_server;
        listen [::]:80 default_server;
-
        server_name _;
-
        root /var/www/html;
-       index.php index.html index.htm index.nginx-debian.html;
-
+       index index.php index.html index.htm index.nginx-debian.html;
        location / {
                try_files $uri $uri/ =404;
        }
 }
-EOF
+EOL
 
 openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/certs/private.key -out /etc/nginx/certs/cert.crt
 
@@ -140,62 +136,52 @@ cat >/etc/nginx/sites-available/default-http3 <<EOL
 server {
         # Enable QUIC and HTTP/3.
         listen 443 quic reuseport;
-
         # Enable HTTP/2 (optional).
         listen 443 ssl http2;
 	
         ssl_certificate      /etc/nginx/certs/cert.crt;
         ssl_certificate_key  /etc/nginx/certs/private.key;
-
         # Enable all TLS versions (TLSv1.3 is required for QUIC).
         ssl_protocols TLSv1.2 TLSv1.3;
-
         # Add Alt-Svc header to negotiate HTTP/3.
         add_header alt-svc 'h3-23=":443"; ma=86400';
 }
-EOF
+EOL
 ln -s /etc/nginx/sites-available/default /etc/nginx/sites-enabled/
 ln -s /etc/nginx/sites-available/default-http3 /etc/nginx/sites-enabled/
 
 
 cat >/etc/nginx/conf.d/proxy.conf <<EOL
 proxy_redirect          off;
-proxy_set_header        Host            $host;
-proxy_set_header        X-Real-IP       $remote_addr;
-proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
 client_max_body_size    10m;
 client_body_buffer_size 128k;
 proxy_connect_timeout   90;
 proxy_send_timeout      90;
 proxy_read_timeout      90;
 proxy_buffers           32 4k;
-EOF
+EOL
 
+cat >/etc/nginx/nginx.conf <<EOL
 user       www-data;  
 worker_processes  auto;  
 error_log  /var/log/nginx/error.log crit;
 pid        /var/run/nginx.pid;
 worker_rlimit_nofile 8192;
-EOF
-
-cat >/etc/nginx/nginx.conf <<EOL
 events {
   worker_connections  4096;
 }
-
 http {
   include    /etc/nginx/mime.types;
   include    /etc/nginx/conf.d/proxy.conf;
   include    /etc/nginx/fastcgi.conf;
   include    /etc/nginx/sites-enabled/*;
-
   default_type application/octet-stream;
-  access_log   logs/access.log  main;
+  access_log   /var/log/access.log  off;
   sendfile     on;
   tcp_nopush   on;
   server_names_hash_bucket_size 128;
 }
-EOF
+EOL
 
 systemctl daemon-reload
 
@@ -207,10 +193,8 @@ ALL DONE!!!
 echo "+++++++++++++++++++++++++++++++++++++++++++
 You can run with this command
 +++++++++++++++++++++++++++++++++++++++++++
-
 systemctl start nginx
 systemctl status nginx
-
 +++++++++++++++++++++++++++++++++++++++++++
 Then check your browser
 +++++++++++++++++++++++++++++++++++++++++++
@@ -218,5 +202,3 @@ http://localhost
 https://localhost"
 
 exit;
-
-
