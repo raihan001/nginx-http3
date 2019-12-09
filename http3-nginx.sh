@@ -48,6 +48,13 @@ cd build
 cmake EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17 -DCMAKE_POSITION_INDEPENDENT_CODE=on' ..
 make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17'
 
+echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+Brotli build
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+cd ~/development
+git clone https://github.com/google/ngx_brotli.git
+cd ngx_brotli && git submodule update --init
+
 
 echo "====================================================================================
 Nginx http/3
@@ -67,6 +74,7 @@ ln -s ~/.cargo/bin/* /usr/sbin/
 
 patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 ./configure \
+--with-compat --add-dynamic-module=../ngx_brotli \
 --with-stream \
 --with-threads \
 --prefix=/usr/local/nginx \
@@ -78,9 +86,26 @@ patch -p01 < ../quiche/extras/nginx/nginx-1.16.patch
 --with-quiche=../quiche
 
 make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17'
+make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17' modules
 make -j4 EXTRA_CMAKE_OPTIONS='-DCMAKE_C_COMPILER=arm64-linux-gcc -DCMAKE_CXX_COMPILER=arm64-linux-gnu-g++ -DCXX_STANDARD_REQUIRED=c++17' install 
 adduser --system --shell /bin/false --no-create-home --disabled-login --disabled-password --gecos "nginx user" --group nginx
 
+echo "++++++++++++++++++++++++++++++++++++++++++++
+copy directory
+++++++++++++++++++++++++++++++++++++++++++++"
+rm -rf /etc/nginx
+mkdir /etc/nginx
+rm -rf /usr/sbin/nginx
+mkdir /etc/nginx/certs
+mkdir /etc/nginx/conf.d
+mkdir /etc/nginx/sites-enabled
+mkdir /etc/nginx/sites-available
+mkdir /var/log/nginx
+ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
+cp -r /usr/local/nginx/conf/* /etc/nginx
+rm -rf /etc/nginx/nginx.conf
+cp objs/*.so /etc/nginx/modules
+chmod 644 /etc/nginx/modules/*.so
 
 echo "+++++++++++++++++++++++++++++++++++++++++++
 enable systemd nginx
@@ -103,21 +128,6 @@ ExecStop=/bin/kill -s TERM $MAINPID
 [Install]
 WantedBy=multi-user.target
 EOL
-
-echo "++++++++++++++++++++++++++++++++++++++++++++
-copy directory
-++++++++++++++++++++++++++++++++++++++++++++"
-rm -rf /etc/nginx
-mkdir /etc/nginx
-rm -rf /usr/sbin/nginx
-mkdir /etc/nginx/certs
-mkdir /etc/nginx/conf.d
-mkdir /etc/nginx/sites-enabled
-mkdir /etc/nginx/sites-available
-mkdir /var/log/nginx
-ln -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf/* /etc/nginx
-rm -rf /etc/nginx/nginx.conf
 
 echo "+++++++++++++++++++++++++++++++++++++++++++
 Create default nginx configuration
@@ -178,6 +188,9 @@ user       www-data;
 worker_processes  auto;  
 error_log  /var/log/nginx/error.log crit;
 pid        /var/run/nginx.pid;
+load_module /etc/nginx/modules/ngx_http_brotli_filter_module.so;
+load_module /etc/nginx/modules/ngx_http_brotli_static_module.so;
+
 worker_rlimit_nofile 8192;
 
 events {
@@ -197,7 +210,7 @@ http {
   server_names_hash_bucket_size 128;
 }
 EOL
-
+rm -rf ~/development
 systemctl daemon-reload
 
 
