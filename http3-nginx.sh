@@ -110,8 +110,7 @@ copy directory
 rm -rf /etc/nginx
 mkdir /etc/nginx
 rm -rf /usr/sbin/nginx
-ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf /etc/nginx
+mkdir /etc/nginx
 mkdir /etc/nginx/certs
 mkdir /etc/nginx/conf.d
 mkdir /etc/nginx/sites-enabled
@@ -197,7 +196,8 @@ http {
   server_names_hash_bucket_size 128;
 }
 EOL
-
+ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
+cp -r /usr/local/nginx/conf/. /etc/nginx
 systemctl daemon-reload
 
 
