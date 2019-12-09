@@ -38,10 +38,7 @@ git clone --recursive https://github.com/cloudflare/quiche
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 Boringssl build
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-cd ~/development/quiche/deps/
-rm -rf boringssl
-git clone https://github.com/raihan001/boringssl.git
-cd boringssl
+cd ~/development/quiche/deps/boringssl
 mkdir build
 cd build
 cmake ..
