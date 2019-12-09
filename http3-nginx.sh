@@ -165,7 +165,6 @@ ln -s /etc/nginx/sites-available/default-http3 /etc/nginx/sites-enabled/
 
 cat >/etc/nginx/conf.d/proxy.conf <<EOL
 proxy_redirect          off;
-proxy_set_header        X-Forwarded-For $proxy_add_x_forwarded_for;
 client_max_body_size    10m;
 client_body_buffer_size 128k;
 proxy_connect_timeout   90;
