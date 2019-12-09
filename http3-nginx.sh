@@ -190,14 +190,14 @@ http {
   include    /etc/nginx/sites-enabled/*;
 
   default_type application/octet-stream;
-  access_log   /var/log/access.log  off;
+  access_log   /var/log/nginx/access.log;
   sendfile     on;
   tcp_nopush   on;
   server_names_hash_bucket_size 128;
 }
 EOL
 ls -s /usr/local/nginx/sbin/nginx /usr/sbin/
-cp -r /usr/local/nginx/conf/. /etc/nginx
+cp -r /usr/local/nginx/conf/* /etc/nginx
 systemctl daemon-reload
 
 
