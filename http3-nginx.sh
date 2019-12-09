@@ -130,7 +130,7 @@ server {
        server_name _;
 
        root /var/www/html;
-       index.php index.html index.htm index.nginx-debian.html;
+       index index.php index.html index.htm index.nginx-debian.html;
 
        location / {
                try_files $uri $uri/ =404;
@@ -191,7 +191,7 @@ http {
   include    /etc/nginx/sites-enabled/*;
 
   default_type application/octet-stream;
-  access_log   logs/access.log  off;
+  access_log   /var/log/access.log  off;
   sendfile     on;
   tcp_nopush   on;
   server_names_hash_bucket_size 128;
